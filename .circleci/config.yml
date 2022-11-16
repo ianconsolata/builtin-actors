@@ -1,11 +1,14 @@
 version: 2.1
 jobs:
   r-test-cimg:
-    docker:
-      - image: cimg/rust:1.63.0
+    machine:
+      image: ubuntu-2004:202010-01
     steps:
       - checkout
-      - setup_remote_docker
+      - run:
+          name: Install rust
+          command: curl https://sh.rustup.rs -sSf | sh -s -- -y
+      - run: rustup target add wasm32-unknown-unknown
       - run:
           name: Version information
           command: rustc --version; cargo --version; rustup --version
@@ -21,7 +24,6 @@ jobs:
             sudo bash install.sh
             popd
             rm -rf kubo
-      - run: rustup target add wasm32-unknown-unknown
       - run:
           name: Reproducibility test
           command: ./scripts/test-reproducibility.sh
