@@ -5,4 +5,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y build-essential
 
 WORKDIR /usr/src/builtin-actors
 
+RUN rustup target add wasm32-unknown-unknown
+
 ENTRYPOINT ["/bin/bash", "-c"]
