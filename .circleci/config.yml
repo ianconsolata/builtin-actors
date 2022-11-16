@@ -24,6 +24,7 @@ jobs:
             sudo bash install.sh
             popd
             rm -rf kubo
+            ipfs init && ipfs daemon &
       - run:
           name: Reproducibility test
           command: ./scripts/test-reproducibility.sh
