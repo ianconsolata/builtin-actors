@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  build-and-test:
+  r-test:
     docker:
       - image: circleci/rust
     steps:
@@ -26,3 +26,8 @@ jobs:
       - run:
           name: Print results
           command: echo "$(cat cid-results.txt)"
+workflows:
+  version: 2
+  r-test:
+    jobs:
+      - r-test
