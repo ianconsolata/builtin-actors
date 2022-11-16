@@ -2,9 +2,10 @@ version: 2.1
 jobs:
   r-test:
     docker:
-      - image: circleci/rust
+      - image: cimg/rust:1.63.0
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           name: Version information
           command: rustc --version; cargo --version; rustup --version
