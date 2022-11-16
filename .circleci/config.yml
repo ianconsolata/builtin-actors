@@ -1,8 +1,8 @@
 version: 2.1
 jobs:
-  r-test-cimg:
+  r-test-2004:
     machine:
-      image: ubuntu-2004:202010-01
+      image: ubuntu-2004:2022.10.1
     steps:
       - checkout
       - run:
@@ -31,8 +31,105 @@ jobs:
       - run:
           name: Print results
           command: echo "$(cat cid-results.txt)"
+  r-test-2204:
+    machine:
+      image: ubuntu-2204:2022.10.2
+    steps:
+      - checkout
+      - run:
+          name: Install rust
+          command: curl https://sh.rustup.rs -sSf | sh -s -- -y
+      - run: rustup target add wasm32-unknown-unknown
+      - run:
+          name: Version information
+          command: rustc --version; cargo --version; rustup --version
+      - run:
+          name: Build Docker container
+          command: docker build . -t filecoin/builtin-actors
+      - run:
+          name: Install IPFS
+          command: |
+            curl -O https://dist.ipfs.tech/kubo/v0.16.0/kubo_v0.16.0_linux-amd64.tar.gz
+            tar -xvzf kubo_v0.16.0_linux-amd64.tar.gz
+            pushd kubo
+            sudo bash install.sh
+            popd
+            rm -rf kubo
+            ipfs init && ipfs daemon &
+      - run:
+          name: Reproducibility test
+          command: ./scripts/test-reproducibility.sh
+      - run:
+          name: Print results
+          command: echo "$(cat cid-results.txt)"
+  r-test-arm:
+    machine:
+      image: ubuntu-2004:2022.04.1
+    resource_class: arm.medium
+    steps:
+      - checkout
+      - run:
+          name: Install rust
+          command: curl https://sh.rustup.rs -sSf | sh -s -- -y
+      - run: rustup target add wasm32-unknown-unknown
+      - run:
+          name: Version information
+          command: rustc --version; cargo --version; rustup --version
+      - run:
+          name: Build Docker container
+          command: docker build . -t filecoin/builtin-actors
+      - run:
+          name: Install IPFS
+          command: |
+            curl -O https://dist.ipfs.tech/kubo/v0.16.0/kubo_v0.16.0_linux-amd64.tar.gz
+            tar -xvzf kubo_v0.16.0_linux-amd64.tar.gz
+            pushd kubo
+            sudo bash install.sh
+            popd
+            rm -rf kubo
+            ipfs init && ipfs daemon &
+      - run:
+          name: Reproducibility test
+          command: ./scripts/test-reproducibility.sh
+      - run:
+          name: Print results
+          command: echo "$(cat cid-results.txt)"
+  r-test-macos:
+    macos:
+      xcode: 13.4.1
+    steps:
+      - checkout
+      - run:
+          name: Install rust
+          command: curl https://sh.rustup.rs -sSf | sh -s -- -y
+      - run: rustup target add wasm32-unknown-unknown
+      - run:
+          name: Version information
+          command: rustc --version; cargo --version; rustup --version
+      - run:
+          name: Build Docker container
+          command: docker build . -t filecoin/builtin-actors
+      - run:
+          name: Install IPFS
+          command: |
+            curl -O https://dist.ipfs.tech/kubo/v0.16.0/kubo_v0.16.0_darwin-amd64.tar.gz
+            tar -xvzf kubo_v0.16.0_darwin-amd64.tar.gz
+            pushd kubo
+            sudo bash install.sh
+            popd
+            rm -rf kubo
+            ipfs init && ipfs daemon &
+      - run:
+          name: Reproducibility test
+          command: ./scripts/test-reproducibility.sh
+      - run:
+          name: Print results
+          command: echo "$(cat cid-results.txt)"
 workflows:
   version: 2
   r-test:
     jobs:
-      - r-test-cimg
+      - r-test-2004
+      - r-test-2204
+      - r-test-arm
+      - r-test-macos

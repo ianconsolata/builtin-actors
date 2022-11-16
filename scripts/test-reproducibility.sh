@@ -9,7 +9,7 @@ CID_FILE=builtin-actors-mainnet.cid
 echo "Test Results:" > $CID_RESULTS
 COMPARE_CID=$(cat $OUTPUT_DIR/$CID_FILE)
 echo "$COMPARE_CID $CID_FILE" >> $CID_RESULTS
-for i in $(seq 10); do
+for i in $(seq 3); do
   LOCAL_DIR=local/${i}
   DOCKER_DIR=docker/${i}
   mkdir -p $OUTPUT_DIR/$LOCAL_DIR
