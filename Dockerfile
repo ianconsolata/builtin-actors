@@ -1,7 +1,7 @@
 FROM rust:1.63.0-alpine AS builtin-actors
 
 # Install dependencies
-RUN apk update && apk add -y alpine-sdk clang
+RUN apk add --update-cache alpine-sdk clang
 
 WORKDIR /usr/src/builtin-actors
 
