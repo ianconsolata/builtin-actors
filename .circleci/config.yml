@@ -1,8 +1,35 @@
 version: 2.1
 jobs:
-  r-test:
+  r-test-cimg:
     docker:
       - image: cimg/rust:1.63.0
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Version information
+          command: rustc --version; cargo --version; rustup --version
+      - run:
+          name: Build Docker container
+          command: docker build . -t filecoin/builtin-actors
+      - run:
+          name: Install IPFS
+          command: |
+            curl -O https://dist.ipfs.tech/kubo/v0.16.0/kubo_v0.16.0_linux-amd64.tar.gz
+            tar -xvzf kubo_v0.16.0_linux-amd64.tar.gz
+            pushd kubo
+            sudo bash install.sh
+            popd
+            rm -rf kubo
+      - run:
+          name: Reproducibility test
+          command: ./scripts/test-reproducibility.sh
+      - run:
+          name: Print results
+          command: echo "$(cat cid-results.txt)"
+  r-test-rust:
+    docker:
+      - image: rust:1.63.0-buster
     steps:
       - checkout
       - setup_remote_docker
@@ -31,4 +58,5 @@ workflows:
   version: 2
   r-test:
     jobs:
-      - r-test
+      - r-test-rust
+      - r-test-cimg
