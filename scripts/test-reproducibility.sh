@@ -16,15 +16,15 @@ for i in $(seq 10); do
   mkdir -p $OUTPUT_DIR/$DOCKER_DIR
 
 
-  # # build binary / generate CID
-  # echo "Building $LOCAL_DIR/$CAR_FILE"
-	# BUILD_FIL_NETWORK=mainnet cargo run -- -o $OUTPUT_DIR/$LOCAL_DIR/CAR_FILE
+ # build binary / generate CID
+ # echo Building $LOCAL_DIR/$CAR_FILE
+ # BUILD_FIL_NETWORK=mainnet cargo run -- -o $OUTPUT_DIR/$LOCAL_DIR/$CAR_FILE
 
-  # echo "Building $CURRENT_DOCKER_CAR_PATH"
-  # docker run --rm -it -v `pwd`:/usr/src/builtin-actors -v $OUTPUT_DIR/$DOCKER_DIR:/usr/src/builtin-actors/output filecoin/builtin-actors "make bundle-mainnet"
+ echo Building $DOCKER_DIR/$CAR_FILE
+ docker run --rm -it -v `pwd`:/usr/src/builtin-actors -v $OUTPUT_DIR/$DOCKER_DIR:/usr/src/builtin-actors/output filecoin/builtin-actors "make bundle-mainnet"
 
-  # ipfs add -q $OUTPUT_DIR/$LOCAL_DIR/$CAR_FILE > $OUTPUT_DIR/$LOCAL_DIR/$CID_FILE
-  # ipfs add -q $OUTPUT_DIR/$DOCKER_DIR/$CAR_FILE > $OUTPUT_DIR/$DOCKER_DIR/$CID_FILE
+ # ipfs add -q $OUTPUT_DIR/$LOCAL_DIR/$CAR_FILE > $OUTPUT_DIR/$LOCAL_DIR/$CID_FILE
+ ipfs add -q $OUTPUT_DIR/$DOCKER_DIR/$CAR_FILE > $OUTPUT_DIR/$DOCKER_DIR/$CID_FILE
 
   # compare CIDs
   for DIR in $LOCAL_DIR $DOCKER_DIR; do
@@ -33,4 +33,4 @@ for i in $(seq 10); do
   done
 done
 
-echo $(cat $CID_RESULTS)
+echo "$(cat $CID_RESULTS)"
